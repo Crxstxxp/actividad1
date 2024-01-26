@@ -16,13 +16,13 @@ const postCv = async (req, res) => {
 
   const newCv = {
     ruta: uploadPath,
-    experiencia: experiencia,
-    escolaridad: escolaridad,
-    celular: celular,
-    email: email,
-    userId: userId
+    // experiencia: experiencia,
+    // escolaridad: escolaridad,
+    // celular: celular,
+    // email: email,
+    userId: userId,
   };
-  
+
   const conn = await connect();
   const [result] = await conn.query("INSERT INTO cv SET ?", [newCv]);
 
@@ -67,7 +67,7 @@ const updateCv = async (req, res) => {
   const oldFilePath = existingCv[0].ruta;
 
   try {
-    await fs.promises.unlink(oldFilePath);
+    fs.promises.unlink(oldFilePath);
   } catch (error) {
     return res
       .status(500)
@@ -79,11 +79,11 @@ const updateCv = async (req, res) => {
 
   const updatedCv = {
     ruta: uploadPath,
-    experiencia: experiencia,
-    escolaridad: escolaridad,
-    celular: celular,
-    email: email,
-    userId: userId
+    // experiencia: experiencia,
+    // escolaridad: escolaridad,
+    // celular: celular,
+    // email: email,
+    userId: userId,
   };
 
   const [result] = await conn.query("UPDATE cv SET ? WHERE id = ?", [
@@ -109,13 +109,7 @@ const deleteCv = async (req, res) => {
 
   const filePath = existingCv[0].ruta;
 
-  try {
-    await fs.promises.unlink(filePath);
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error al eliminar el archivo", error });
-  }
+  await fs.promises.unlink(filePath);
 
   const [result] = await conn.query("DELETE FROM cv WHERE id = ?", [id]);
 
