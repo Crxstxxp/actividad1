@@ -9,12 +9,20 @@ const getCvs = async (req, res) => {
 };
 
 const postCv = async (req, res) => {
-  // console.log(req.files);
   const { file } = req.files;
+  const { experiencia, escolaridad, celular, email, userId } = req.body;
   const uploadPath = __dirname + "/../uploads/" + file.name;
   await file.mv(uploadPath);
 
-  const newCv = { ruta: uploadPath };
+  const newCv = {
+    ruta: uploadPath,
+    experiencia: experiencia,
+    escolaridad: escolaridad,
+    celular: celular,
+    email: email,
+    userId: userId
+  };
+  
   const conn = await connect();
   const [result] = await conn.query("INSERT INTO cv SET ?", [newCv]);
 
@@ -46,6 +54,7 @@ const getCvFile = async (req, res) => {
 const updateCv = async (req, res) => {
   const { id } = req.params;
   const { file } = req.files;
+  const { experiencia, escolaridad, celular, email, userId } = req.body;
 
   const conn = await connect();
 
@@ -57,20 +66,25 @@ const updateCv = async (req, res) => {
 
   const oldFilePath = existingCv[0].ruta;
 
-  // console.log(oldFilePath)
-
   try {
     await fs.promises.unlink(oldFilePath);
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Error al eliminar el archivo antiguo", error });
+      .json({ message: "Error al eliminar el archivo", error });
   }
 
-  const uploadPath = __dirname + "/../uploads/" + file.name;
+  const uploadPath = path.join(__dirname, "../uploads", file.name);
   await file.mv(uploadPath);
 
-  const updatedCv = { ruta: uploadPath };
+  const updatedCv = {
+    ruta: uploadPath,
+    experiencia: experiencia,
+    escolaridad: escolaridad,
+    celular: celular,
+    email: email,
+    userId: userId
+  };
 
   const [result] = await conn.query("UPDATE cv SET ? WHERE id = ?", [
     updatedCv,
